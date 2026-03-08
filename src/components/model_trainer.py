@@ -1,0 +1,1 @@
+'''A model trainer is a component (script, module, or system) that trains a machine learning model using prepared data.'''

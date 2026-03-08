@@ -1,0 +1,1 @@
+'''Data transformation is the process of cleaning, structuring, enriching, and converting raw data into a usable format for analysis, modeling, or storage.'''
