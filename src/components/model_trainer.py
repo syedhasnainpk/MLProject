@@ -49,18 +49,78 @@ class ModelTrainer:
                 "AdaBoost_Classifier": AdaBoostRegressor()
             }
             
-            model_report:dict = evaluate_model(x_train=x_train, y_train=y_train, x_test=x_test, y_test=y_test, models=models)
+            params={
+                
+                "Decision_Tree": [
+                    {
+                        "criterion": [
+                            "squared_error",
+                            "friedman_mse",
+                            "absolute_error",
+                            "poisson",
+                        ]
+                    }
+                ],
+                
+                "Random_Forest": [
+                    {
+                        "n_estimators": [8, 16, 32, 64, 128, 256],
+                        "max_depth": [None, 5, 10, 20],
+                        "min_samples_split": [2, 5, 10],
+                        "min_samples_leaf": [1, 2, 4]
+                    }
+                ],
+                
+                "Gradient_Boosting":[
+                    {
+                        "learning_rate": [0.1, 0.01, 0.05, 0.001],
+                        "subsample": [0.6, 0.7, 0.75, 0.8, 0.85, 0.9],
+                        "n_estimators": [8, 16, 32, 64, 128, 256],
+                    }
+                ],
+                
+                "Linear_Regression":[
+                    {}
+                ],
+                
+                "K-Neighbors_Classifier": [
+                    {
+                        "n_neighbors": [3, 5, 7, 9]
+                    }
+                ],
+                
+                "XGBoosting_Classifier":[
+                    {
+                        "learning_rate": [0.1, 0.01, 0.05, 0.001],
+                        "n_estimators": [8, 16, 32, 64, 128, 256],
+                    }
+                ],
+                
+                "CatBoosting_Classifier":[
+                    {
+                        "depth": [6, 8, 10],
+                        "learning_rate": [0.01, 0.05, 0.1],
+                        "iterations": [30, 50, 100],
+                    }
+                ],
+                
+                "AdaBoost_Classifier":[
+                    {
+                        "learning_rate": [0.1, 0.01, 0.5, 0.001],
+                        "n_estimators": [8, 16, 32, 64, 128, 256],
+                    }
+                ]    
+            }
+            
+            model_report:dict = evaluate_model(x_train=x_train, y_train=y_train, x_test=x_test, y_test=y_test, models=models, param=params)
             
             
-            # To get the best model score from dictionary
-            best_model_score = max(sorted(model_report.values()))
-            
-            # To get best model name from dictionary
-            best_model_name = list(model_report.keys())[
-                list(model_report.values()).index(best_model_score)
-                ]
-            
-            best_model = models[best_model_name]
+            # Extract scores and models from the report
+            scores = {k: v[0] for k, v in model_report.items()}
+            best_model_score = max(scores.values())
+            best_model_name = max(scores, key=scores.get)
+            best_model = model_report[best_model_name][1]
+
             
             if best_model_score < 0.6:
                 raise CustomException("No Best Model Found")
